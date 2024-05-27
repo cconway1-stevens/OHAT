@@ -1,7 +1,5 @@
-#sales_sequence.py
 import streamlit as st
 import pandas as pd
-
 
 def calculate_cost(tire_cost, tax, surcharge, tire_markup, nj_tire_tax, disposal_fee):
     fees = tire_markup + nj_tire_tax + disposal_fee + surcharge
@@ -35,7 +33,6 @@ def sales_sequence_page(start_price, end_price, interval, tax, surcharge, tire_m
         st.write("## Generated Sequence Table")
         st.dataframe(df, use_container_width=True)
 
-# Example usage
 if __name__ == "__main__":
     st.sidebar.title("Sales Sequence Parameters")
     start_price = st.sidebar.number_input("Start Price", value=100, step=1, key="start_price")
@@ -47,4 +44,4 @@ if __name__ == "__main__":
     nj_tire_tax = st.sidebar.number_input("NJ Tire Tax ($)", value=1.5, key="nj_tire_tax")
     disposal_fee = st.sidebar.number_input("Disposal Fee ($)", value=7.0, key="disposal_fee")
 
-    sales_sequence_page(start_price, end_price, interval, tax, surcharge, tire_markup, nj_tire_tax, disposal_fee)
+    sales_sequence_page(int(start_price), int(end_price), int(interval), tax, surcharge, tire_markup, nj_tire_tax, disposal_fee)

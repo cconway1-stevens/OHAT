@@ -18,10 +18,8 @@ def generate_pdf(df, notes, filename):
     margin = 30
     padding = 10
 
-    # Draw bounding box
     c.rect(margin - padding, margin - padding, width - 2 * margin + 2 * padding, height - 2 * margin + 2 * padding)
 
-    # Title and Header Information
     c.setFont("Helvetica-Bold", 16)
     c.drawString(margin, height - 40, "Tire Pricing Estimate")
 
@@ -30,30 +28,26 @@ def generate_pdf(df, notes, filename):
     c.drawString(margin, height - 85, "1178 Ocean Heights Avenue, Egg Harbor Township, NJ 08234")
     c.drawString(margin, height - 100, "Phone: (609) 241-1546")
 
-    c.line(margin, height - 110, width - margin, height - 110)  # Line separator
+    c.line(margin, height - 110, width - margin, height - 110)
 
-    # Calculate column positions and widths
     num_cols = len(df.columns)
     col_width = (width - 2 * margin) / num_cols
     x_positions = [margin + col_width * i for i in range(num_cols)]
 
-    # Table headers
     y = height - 130
     c.setFont("Helvetica-Bold", 12)
     for i, col in enumerate(df.columns):
         c.drawString(x_positions[i], y, col)
 
-    # Table rows
     c.setFont("Helvetica", 12)
     y = height - 150
-    row_height = 20  # Adjust row height
+    row_height = 20
     for _, row in df.iterrows():
-        if y < margin + 60:  # Check if there's enough space for the next row and footer
+        if y < margin + 60:
             c.showPage()
             c.setFont("Helvetica-Bold", 12)
             c.drawString(margin, height - 40, "Tire Pricing Estimate (Continued)")
 
-            # Table headers on new page
             y = height - 70
             c.setFont("Helvetica-Bold", 12)
             for i, col in enumerate(df.columns):
@@ -64,11 +58,10 @@ def generate_pdf(df, notes, filename):
         for i, col in enumerate(df.columns):
             value = row[col]
             if isinstance(value, float):
-                value = f"${value:.2f}"  # Format as currency
+                value = f"${value:.2f}"
             c.drawString(x_positions[i], y, str(value))
         y -= row_height
 
-    # Footer Information
     if y < margin + 80:
         c.showPage()
         y = height - 40
@@ -79,12 +72,12 @@ def generate_pdf(df, notes, filename):
 
     y -= 20
     c.setFont("Helvetica-Bold", 12)
-    c.setFillColorRGB(1, 0, 0)  # Red color for promotion
+    c.setFillColorRGB(1, 0, 0)
     c.drawString(margin, y, "Promotion: Buy 4 tires and get a free alignment and tire rotation.")
 
     y -= 20
     c.setFont("Helvetica", 10)
-    c.setFillColorRGB(0, 0, 0)  # Reset color to black
+    c.setFillColorRGB(0, 0, 0)
     c.drawString(margin, y, "Legal Disclaimer: This estimate is not a contract. Prices and availability are subject to change.")
     c.drawString(margin, y - 10, "Please contact us for the most up-to-date pricing and availability.")
 
@@ -121,13 +114,10 @@ def tire_estimator_page(tax, surcharge, tire_markup, nj_tire_tax, disposal_fee):
         st.write("## Estimates")
         st.write(estimate_df)
 
-        # Save the generated estimate DataFrame in session state
         st.session_state.estimate_df = estimate_df
         st.session_state.notes = notes
 
-    # Combine PDF generation and download into one button
     if 'estimate_df' in st.session_state:
-        # Generate filename with current date and time
         now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         filename = f"Ocean Heights Tire EST - {now}.pdf"
         generate_pdf(st.session_state.estimate_df, st.session_state.notes, filename)
@@ -139,5 +129,4 @@ def tire_estimator_page(tax, surcharge, tire_markup, nj_tire_tax, disposal_fee):
             file_name=filename,
             mime='application/octet-stream'
         )
-        # Remove the PDF file after download
         os.remove(filename)

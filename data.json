@@ -1,0 +1,16 @@
+{
+    "tires": [],
+    "brands": ["Michelin", "Goodyear", "Bridgestone", "Pirelli", "Continental"],
+    "tax": 6.625,
+    "surcharge": 5.0,
+    "tire_markup": 67.0,
+    "nj_tire_tax": 1.5,
+    "disposal_fee": 7.0,
+    "start_price": 100,
+    "end_price": 500,
+    "interval": 10,
+    "shop_name": "Ocean Heights Auto and Tire",
+    "shop_address": "1178 Ocean Heights Avenue, Egg Harbor Township, NJ 08234",
+    "shop_phone": "Phone: (609) 241-1546"
+  }
+  
