@@ -1,0 +1,35 @@
+.
+├── README.md
+├── jsconfig.json
+├── next.config.mjs
+├── package-lock.json
+├── package.json
+├── pages
+│   ├── _app.js
+│   ├── about.js
+│   ├── index.js
+│   └── manage-brands.js
+├── postcss.config.js
+├── postcss.config.mjs
+├── public
+│   ├── next.svg
+│   └── vercel.svg
+├── src
+│   ├── components
+│   │   ├── NavBar.js
+│   │   ├── PinInput.js
+│   │   ├── Sidebar.js
+│   │   ├── SpreadsheetTable.js
+│   │   └── TireEstimator.js
+│   ├── context
+│   │   ├── TireBrandsContext.js
+│   │   └── TireContext.js
+│   └── styles
+│       ├── Print.module.css
+│       ├── SpreadsheetTable.module.css
+│       └── globals.css
+├── tailwind.config.js
+├── tree_structure.txt
+└── yarn.lock
+
+6 directories, 26 files

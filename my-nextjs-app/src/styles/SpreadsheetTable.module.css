@@ -1,0 +1,26 @@
+/* src/styles/SpreadsheetTable.module.css */
+.spreadsheet {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.spreadsheet th,
+.spreadsheet td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.spreadsheet th {
+  background-color: #f4f4f4;
+  text-align: center;
+}
+
+.spreadsheet tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.spreadsheet tr:hover {
+  background-color: #ddd;
+}

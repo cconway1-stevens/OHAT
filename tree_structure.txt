@@ -1,0 +1,25 @@
+.
+├── my-nextjs-app
+│   ├── README.md
+│   ├── jsconfig.json
+│   ├── next.config.mjs
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── postcss.config.mjs
+│   ├── public
+│   │   ├── next.svg
+│   │   └── vercel.svg
+│   ├── src
+│   │   └── app
+│   │       ├── components
+│   │       │   ├── NavBar.js
+│   │       │   └── PinInput.js
+│   │       ├── favicon.ico
+│   │       ├── globals.css
+│   │       ├── layout.js
+│   │       └── page.js
+│   ├── tailwind.config.js
+│   └── yarn.lock
+└── tree_structure.txt
+
+5 directories, 17 files
