@@ -5,7 +5,6 @@ from datetime import datetime
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from textwrap import wrap
-from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode
 
 def calculate_cost(tire_cost, tax, surcharge, tire_markup, nj_tire_tax, disposal_fee):
     fees = tire_markup + nj_tire_tax + disposal_fee + surcharge
@@ -106,23 +105,7 @@ def tire_estimator_page(tax, surcharge, tire_markup, nj_tire_tax, disposal_fee):
     st.write("## Tire List")
     if st.session_state.tires:
         tire_df = pd.DataFrame(st.session_state.tires)
-
-        gb = GridOptionsBuilder.from_dataframe(tire_df)
-        gb.configure_pagination()
-        gb.configure_default_column(editable=True)
-        grid_options = gb.build()
-
-        response = AgGrid(
-            tire_df,
-            gridOptions=grid_options,
-            update_mode=GridUpdateMode.MODEL_CHANGED,
-            editable=True,
-            fit_columns_on_grid_load=True
-        )
-
-        # Update session state with the edited table
-        st.session_state.tires = response['data'].to_dict('records')
-
+        st.dataframe(tire_df, use_container_width=True)
     else:
         st.write("No tires added yet.")
 
