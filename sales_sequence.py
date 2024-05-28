@@ -4,6 +4,7 @@ from reportlab.lib.pagesizes import landscape, letter
 from reportlab.pdfgen import canvas
 from reportlab.lib import colors
 from reportlab.platypus import Table, TableStyle
+from datetime import datetime
 
 def calculate_cost(tire_cost, tax, surcharge, tire_markup, nj_tire_tax, disposal_fee, credit_card_fee):
     fees = tire_markup + nj_tire_tax + disposal_fee + surcharge
@@ -36,7 +37,8 @@ def sales_sequence_page(start_price, end_price, interval, tax, surcharge, tire_m
     df = generate_sales_sequence(start_price, end_price, interval, tax, surcharge, tire_markup, nj_tire_tax, disposal_fee, credit_card_fee)
     if df is not None:
         st.write("## Generated Sequence Table")
-        st.dataframe(df.style.apply(lambda x: ['background-color: #f5f5f5' if i%2 == 0 else 'background-color: #ffffff' for i in range(len(x))], axis=0), use_container_width=True)
+        styled_df = df.style.apply(lambda x: ['background-color: #f5f5f5' if i % 2 == 0 else 'background-color: #ffffff' for i in range(len(x))], axis=0)
+        st.dataframe(styled_df, use_container_width=True)
 
         if st.button("Generate PDF"):
             now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -85,6 +87,6 @@ def generate_pdf(df, start_price, end_price, interval, tax, surcharge, tire_mark
                                ('GRID', (0, 0), (-1, -1), 1, colors.black)]))
 
     table.wrapOn(c, width, height)
-    table.drawOn(c, 30, height - 30 - len(table_data) * 20)
+    table.drawOn(c, 30, height - len(table_data) * 20)
     
     c.save()
