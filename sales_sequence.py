@@ -1,11 +1,10 @@
-import os
 import streamlit as st
 import pandas as pd
-from reportlab.lib.pagesizes import landscape, letter
-from reportlab.pdfgen import canvas
-from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, PageBreak
+from reportlab.lib import colors
 from datetime import datetime
+import os
 
 def calculate_cost(tire_cost, tax, surcharge, tire_markup, nj_tire_tax, disposal_fee, credit_card_fee):
     fees = tire_markup + nj_tire_tax + disposal_fee + surcharge
@@ -56,7 +55,7 @@ def sales_sequence_page(start_price, end_price, interval, tax, surcharge, tire_m
             os.remove(filename)
 
 def generate_pdf(df, start_price, end_price, interval, tax, surcharge, tire_markup, nj_tire_tax, disposal_fee, credit_card_fee, filename):
-    doc = SimpleDocTemplate(filename, pagesize=landscape(letter))
+    doc = SimpleDocTemplate(filename, pagesize=letter)
     elements = []
 
     # First page with variables and equations
@@ -84,9 +83,9 @@ def generate_pdf(df, start_price, end_price, interval, tax, surcharge, tire_mark
     ]))
     elements.append(PageBreak())
 
-    # Subsequent pages with tables in landscape mode
+    # Subsequent pages with tables in portrait mode
     table_data = [df.columns.values.tolist()] + df.values.tolist()
-    table = Table(table_data, colWidths=[landscape(letter)[0]/8.0]*8)
+    table = Table(table_data, colWidths=[letter[0]/8.0]*8)
     table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
@@ -100,4 +99,3 @@ def generate_pdf(df, start_price, end_price, interval, tax, surcharge, tire_mark
     elements.append(table)
     
     doc.build(elements)
-
