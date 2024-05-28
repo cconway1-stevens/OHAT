@@ -6,10 +6,11 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from textwrap import wrap
 
-def calculate_cost(tire_cost, tax, surcharge, tire_markup, nj_tire_tax, disposal_fee):
+def calculate_cost(tire_cost, tax, surcharge, tire_markup, nj_tire_tax, disposal_fee, credit_card_fee):
     fees = tire_markup + nj_tire_tax + disposal_fee + surcharge
     total_with_tax = (tire_cost + fees) * (1 + tax / 100)
-    return round(total_with_tax, 2)
+    total_with_credit_card_fee = total_with_tax * (1 + credit_card_fee / 100)
+    return round(total_with_credit_card_fee, 2)
 
 def generate_pdf(df, notes, filename):
     c = canvas.Canvas(filename, pagesize=letter)
@@ -92,7 +93,7 @@ def generate_pdf(df, notes, filename):
 
     c.save()
 
-def tire_estimator_page(tax, surcharge, tire_markup, nj_tire_tax, disposal_fee):
+def tire_estimator_page(tax, surcharge, tire_markup, nj_tire_tax, disposal_fee, credit_card_fee):
     st.title("Tire Pricing Estimator")
 
     st.write("## Tire List")
@@ -107,7 +108,7 @@ def tire_estimator_page(tax, surcharge, tire_markup, nj_tire_tax, disposal_fee):
     if st.button("Generate Estimates"):
         estimates = []
         for tire in st.session_state.tires:
-            costs = [round(calculate_cost(tire['cost'], tax, surcharge, tire_markup, nj_tire_tax, disposal_fee) * qty, 2) for qty in range(1, 5)]
+            costs = [round(calculate_cost(tire['cost'], tax, surcharge, tire_markup, nj_tire_tax, disposal_fee, credit_card_fee) * qty, 2) for qty in range(1, 5)]
             estimates.append([tire['name'], tire['brand']] + costs)
 
         estimate_df = pd.DataFrame(estimates, columns=["Tire Name", "Tire Brand", "1 Tire", "2 Tires", "3 Tires", "4 Tires"])
