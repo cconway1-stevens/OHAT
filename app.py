@@ -1,10 +1,14 @@
 import streamlit as st
+import pandas as pd
+import base64
 import json
 import os
-import base64
 from datetime import datetime
-from sales_sequence import sales_sequence_page
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from textwrap import wrap
 from tire_estimator import tire_estimator_page
+from sales_sequence import sales_sequence_page
 
 def load_data():
     with open("data.json", "r") as f:
@@ -84,7 +88,7 @@ if __name__ == "__main__":
         st.session_state.credit_card_fee = data.get("credit_card_fee", 3.0)
 
     def reset_url():
-        st.query_params()
+        st.experimental_set_query_params()
 
     st.sidebar.title("Navigation")
     page = st.sidebar.radio("Go to", ["Landing Page", "Tire Estimator", "Sales Sequence Chart"])
@@ -182,4 +186,37 @@ if __name__ == "__main__":
 
             st.write("## Download Data")
             json_str = json.dumps(data, indent=4)
-            st.download_button
+            st.download_button(label="Download JSON", data=json_str, file_name="data.json", mime="application/json")
+
+    elif page == "Tire Estimator":
+        with st.sidebar.expander("Tire Details"):
+            tire_name = st.text_input("Tire Name", key="tire_name")
+            tire_brand = st.selectbox("Tire Brand", st.session_state.brands + ["Other"], key="tire_brand")
+            if tire_brand == "Other":
+                tire_brand = st.text_input("Enter New Brand", key="new_tire_brand")
+                if st.button("Add Brand", key="add_brand_button"):
+                    if tire_brand and tire_brand not in st.session_state.brands:
+                        st.session_state.brands.append(tire_brand)
+            else:
+                st.text(f"Selected Brand: {tire_brand}")
+
+            tire_cost = st.number_input("Tire Cost ($)", value=100.0, key="tire_cost")
+            if st.button("Add Tire", key="add_tire_button"):
+                st.session_state.tires.append({"name": tire_name, "brand": tire_brand, "cost": tire_cost})
+
+        with st.sidebar.expander("Actions"):
+            if st.button("Undo Last Tire", key="undo_tire_button"):
+                st.session_state.tires.pop() if st.session_state.tires else None
+
+            if st.button("Clear All Tires", key="clear_tires_button"):
+                st.session_state.tires = []
+
+        tire_estimator_page(st.session_state.tax, st.session_state.surcharge, st.session_state.tire_markup, st.session_state.nj_tire_tax, st.session_state.disposal_fee, st.session_state.credit_card_fee)
+
+    elif page == "Sales Sequence Chart":
+        with st.sidebar.expander("Sales Sequence Chart"):
+            start_price = st.number_input("Start Price", value=st.session_state.start_price, step=1, key="start_price")
+            end_price = st.number_input("End Price", value=st.session_state.end_price, step=1, key="end_price")
+            interval = st.number_input("Interval", value=st.session_state.interval, step=1, key="interval")
+
+        sales_sequence_page(int(start_price), int(end_price), int(interval), st.session_state.tax, st.session_state.surcharge, st.session_state.tire_markup, st.session_state.nj_tire_tax, st.session_state.disposal_fee, st.session_state.credit_card_fee)
