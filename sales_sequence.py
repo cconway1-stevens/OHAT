@@ -85,22 +85,16 @@ def generate_pdf(df, start_price, end_price, interval, tax, surcharge, tire_mark
 
     # Subsequent pages with tables in portrait mode
     table_data = [df.columns.values.tolist()] + df.values.tolist()
-    table = Table(table_data, repeatRows=1, colWidths=[(letter[0]-60)/9.0]*9)
-    alternating_colors = [('BACKGROUND', (0, i), (-1, i), colors.whitesmoke if i % 2 == 0 else colors.beige) for i in range(1, len(table_data))]
+    table = Table(table_data, colWidths=[letter[0]/8.0]*8)
     table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
         ('GRID', (0, 0), (-1, -1), 1, colors.black),
         ('FONTSIZE', (0, 0), (-1, -1), 10),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTNAME', (2, 0), (2, -1), 'Helvetica-Bold'),
-        ('FONTNAME', (4, 0), (4, -1), 'Helvetica-Bold'),
-        ('LEFTPADDING', (0, 0), (-1, -1), 6),
-        ('RIGHTPADDING', (0, 0), (-1, -1), 6),
-        ('TOPPADDING', (0, 0), (-1, -1), 6),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 6)
-    ] + alternating_colors))
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold')
+    ]))
     
     elements.append(table)
     
