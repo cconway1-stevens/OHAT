@@ -1,6 +1,32 @@
+import streamlit as st
+import json
 from sales_sequence import sales_sequence_page
+from tire_estimator import tire_estimator_page
 
-# Other parts of your code...
+def load_data():
+    with open("data.json", "r") as f:
+        return json.load(f)
+
+def save_data(data):
+    with open("data.json", "w") as f:
+        json.dump(data, f)
+
+def encode_data_to_url(data):
+    json_str = json.dumps(data)
+    json_bytes = json_str.encode('utf-8')
+    base64_bytes = base64.urlsafe_b64encode(json_bytes)
+    base64_str = base64_bytes.decode('utf-8')
+    return base64_str
+
+def decode_data_from_url():
+    query_params = st.experimental_get_query_params()
+    if "data" in query_params:
+        base64_str = query_params["data"][0]
+        base64_bytes = base64.urlsafe_b64decode(base64_str.encode('utf-8'))
+        json_str = base64_bytes.decode('utf-8')
+        data = json.loads(json_str)
+        return data
+    return None
 
 if __name__ == "__main__":
     # Load default data
