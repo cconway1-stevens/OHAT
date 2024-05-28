@@ -1,11 +1,11 @@
+import os
 import streamlit as st
 import pandas as pd
 from reportlab.lib.pagesizes import landscape, letter
 from reportlab.pdfgen import canvas
 from reportlab.lib import colors
-from reportlab.platypus import Table, TableStyle
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, PageBreak
 from datetime import datetime
-import os
 
 def calculate_cost(tire_cost, tax, surcharge, tire_markup, nj_tire_tax, disposal_fee, credit_card_fee):
     fees = tire_markup + nj_tire_tax + disposal_fee + surcharge
@@ -56,38 +56,48 @@ def sales_sequence_page(start_price, end_price, interval, tax, surcharge, tire_m
             os.remove(filename)
 
 def generate_pdf(df, start_price, end_price, interval, tax, surcharge, tire_markup, nj_tire_tax, disposal_fee, credit_card_fee, filename):
-    c = canvas.Canvas(filename, pagesize=letter)
-    
+    doc = SimpleDocTemplate(filename, pagesize=landscape(letter))
+    elements = []
+
     # First page with variables and equations
-    c.setFont("Helvetica-Bold", 16)
-    c.drawString(30, 750, "Tire Sales Sequence Chart Variables and Equations")
-    c.setFont("Helvetica", 12)
-    c.drawString(30, 720, f"Start Price: ${start_price}")
-    c.drawString(30, 700, f"End Price: ${end_price}")
-    c.drawString(30, 680, f"Interval: ${interval}")
-    c.drawString(30, 660, f"Tax: {tax}%")
-    c.drawString(30, 640, f"Surcharge: ${surcharge}")
-    c.drawString(30, 620, f"Tire Markup: ${tire_markup}")
-    c.drawString(30, 600, f"NJ Tire Tax: ${nj_tire_tax}")
-    c.drawString(30, 580, f"Disposal Fee: ${disposal_fee}")
-    c.drawString(30, 560, f"Credit Card Fee: {credit_card_fee}%")
-    c.drawString(30, 520, "Total Cost = (Tire Cost + Fees) * (1 + Tax / 100) * (1 + Credit Card Fee / 100)")
+    elements.append(Table([
+        ["Tire Sales Sequence Chart Variables and Equations"],
+        ["Start Price:", f"${start_price}"],
+        ["End Price:", f"${end_price}"],
+        ["Interval:", f"${interval}"],
+        ["Tax:", f"{tax}%"],
+        ["Surcharge:", f"${surcharge}"],
+        ["Tire Markup:", f"${tire_markup}"],
+        ["NJ Tire Tax:", f"${nj_tire_tax}"],
+        ["Disposal Fee:", f"${disposal_fee}"],
+        ["Credit Card Fee:", f"{credit_card_fee}%"],
+        ["Total Cost = (Tire Cost + Fees) * (1 + Tax / 100) * (1 + Credit Card Fee / 100)"]
+    ], style=[
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, -1), 12),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black)
+    ]))
+    elements.append(PageBreak())
 
-    c.showPage()
-    
     # Subsequent pages with tables in landscape mode
-    c.setPageSize(landscape(letter))
-    width, height = landscape(letter)
-
     table_data = [df.columns.values.tolist()] + df.values.tolist()
-    table = Table(table_data, colWidths=[width/8.0]*8)
-    table.setStyle(TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-                               ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-                               ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                               ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-                               ('GRID', (0, 0), (-1, -1), 1, colors.black)]))
-
-    table.wrapOn(c, width, height)
-    table.drawOn(c, 30, height - len(table_data) * 20)
+    table = Table(table_data, colWidths=[landscape(letter)[0]/8.0]*8)
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold')
+    ]))
     
-    c.save()
+    elements.append(table)
+    
+    doc.build(elements)
+
