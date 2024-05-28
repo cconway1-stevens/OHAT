@@ -5,6 +5,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib import colors
 from reportlab.platypus import Table, TableStyle
 from datetime import datetime
+import os
 
 def calculate_cost(tire_cost, tax, surcharge, tire_markup, nj_tire_tax, disposal_fee, credit_card_fee):
     fees = tire_markup + nj_tire_tax + disposal_fee + surcharge
