@@ -82,6 +82,9 @@ if "shop_address" not in st.session_state:
 if "shop_phone" not in st.session_state:
     st.session_state.shop_phone = data.get("shop_phone", "Phone: (609) 241-1546")
 
+if "credit_card_fee" not in st.session_state:
+    st.session_state.credit_card_fee = data.get("credit_card_fee", 3.0)
+
 def reset_url():
     st.experimental_set_query_params()
 
@@ -119,6 +122,7 @@ if page == "Landing Page":
         shop_name = st.text_input("Shop Name", value=st.session_state.shop_name, key="shop_name_edit")
         shop_address = st.text_input("Shop Address", value=st.session_state.shop_address, key="shop_address_edit")
         shop_phone = st.text_input("Shop Phone", value=st.session_state.shop_phone, key="shop_phone_edit")
+        credit_card_fee = st.number_input("Credit Card Fee (%)", value=st.session_state.credit_card_fee, key="credit_card_fee_edit")
 
         if st.button("Save Data"):
             st.session_state.tires = json.loads(tires)
@@ -134,6 +138,7 @@ if page == "Landing Page":
             st.session_state.shop_name = shop_name
             st.session_state.shop_address = shop_address
             st.session_state.shop_phone = shop_phone
+            st.session_state.credit_card_fee = credit_card_fee
 
             data_to_save = {
                 "tires": st.session_state.tires,
@@ -148,7 +153,8 @@ if page == "Landing Page":
                 "interval": st.session_state.interval,
                 "shop_name": st.session_state.shop_name,
                 "shop_address": st.session_state.shop_address,
-                "shop_phone": st.session_state.shop_phone
+                "shop_phone": st.session_state.shop_phone,
+                "credit_card_fee": st.session_state.credit_card_fee
             }
             save_data(data_to_save)
             st.success("Data saved successfully")
@@ -168,7 +174,8 @@ if page == "Landing Page":
                 "interval": st.session_state.interval,
                 "shop_name": st.session_state.shop_name,
                 "shop_address": st.session_state.shop_address,
-                "shop_phone": st.session_state.shop_phone
+                "shop_phone": st.session_state.shop_phone,
+                "credit_card_fee": st.session_state.credit_card_fee
             }
             base64_str = encode_data_to_url(data_to_encode)
             shareable_url = f"https://oceanheights.streamlit.app/?data={base64_str}"
@@ -202,7 +209,7 @@ elif page == "Tire Estimator":
         if st.button("Clear All Tires", key="clear_tires_button"):
             st.session_state.tires = []
 
-    tire_estimator_page(st.session_state.tax, st.session_state.surcharge, st.session_state.tire_markup, st.session_state.nj_tire_tax, st.session_state.disposal_fee)
+    tire_estimator_page(st.session_state.tax, st.session_state.surcharge, st.session_state.tire_markup, st.session_state.nj_tire_tax, st.session_state.disposal_fee, st.session_state.credit_card_fee)
 
 elif page == "Sales Sequence Chart":
     with st.sidebar.expander("Sales Sequence Chart"):
@@ -210,4 +217,4 @@ elif page == "Sales Sequence Chart":
         end_price = st.number_input("End Price", value=st.session_state.end_price, step=1, key="end_price")
         interval = st.number_input("Interval", value=st.session_state.interval, step=1, key="interval")
 
-    sales_sequence_page(int(start_price), int(end_price), int(interval), st.session_state.tax, st.session_state.surcharge, st.session_state.tire_markup, st.session_state.nj_tire_tax, st.session_state.disposal_fee)
+    sales_sequence_page(int(start_price), int(end_price), int(interval), st.session_state.tax, st.session_state.surcharge, st.session_state.tire_markup, st.session_state.nj_tire_tax, st.session_state.disposal_fee, st.session_state.credit_card_fee)
